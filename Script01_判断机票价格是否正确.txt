@@ -1,0 +1,47 @@
+systemutil.Run "D:\HP\QuickTest Professional\samples\flight\app\flight4a.exe"
+Dialog("Login").WinEdit("Agent Name:").Set "ujiuye"
+Dialog("Login").WinEdit("Password:").SetSecure "5c4fbb7c41473f142f0aad9fa6d941a561894a0a"
+Dialog("Login").WinEdit("Password:").Type  micReturn
+a=Window("Flight Reservation").Exist(3)
+Window("Flight Reservation").ActiveX("MaskEdBox").Type "121221"
+Window("Flight Reservation").WinComboBox("Fly From:").Select "Frankfurt"
+Window("Flight Reservation").WinComboBox("Fly To:").Select "London"
+Window("Flight Reservation").WinButton("FLIGHT").Click
+Window("Flight Reservation").Dialog("Flights Table").WinList("From").Select 0
+Window("Flight Reservation").Dialog("Flights Table").WinButton("OK").Click
+Window("Flight Reservation").WinEdit("Name:").Set "offcn"
+'-----机票数,n
+Window("Flight Reservation").WinEdit("Tickets:").SetSelection 0,1
+n=RandomNumber(1,10)    
+Window("Flight Reservation").WinEdit("Tickets:").Set n
+nums=Window("Flight Reservation").WinEdit("Tickets:").GetROProperty("text")
+print "机票数是："&nums
+'-------------仓位级别,c
+c=RandomNumber(1,3)
+If c=1 Then
+	Window("Flight Reservation").WinRadioButton("First").Set
+	elseif c=2 then
+	Window("Flight Reservation").WinRadioButton("Business").Set
+	else
+	Window("Flight Reservation").WinRadioButton("Economy").Set
+End If
+'-------单价,p,price
+p=Window("Flight Reservation").WinEdit("Price:").GetROProperty("text")
+price=right(p,len(p)-1)
+print "机票单价是："&price
+'-------总价,t,total
+t=Window("Flight Reservation").WinEdit("Total:").GetROProperty("text")
+total=formatnumber(right(t,len(t)-1),2)
+print "机票总价是："&total
+money=formatnumber(price*nums,2)
+print "机票总价应该是："&money
+If  money=total Then
+	reporter.ReportEvent micPass,"预期结果"&money&",实际结果"&total,"测试通过" 
+	else
+	reporter.ReportEvent micFail,"预期结果"&money&",实际结果"&total,"测试失败"
+End If
+Window("Flight Reservation").WinButton("Insert Order").Click
+Window("Flight Reservation").Close
+
+
+

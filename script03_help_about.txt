@@ -1,0 +1,12 @@
+Systemutil.Run "D:\HP\QuickTest Professional\samples\flight\app\flight4a.exe"
+Dialog("text:=Login").WinEdit("attached text:=Agent Name:").Set "ujiuye"
+Dialog("text:=Login").WinEdit("attached text:=Password:").Set "mercury"
+'------查看帮助信息
+Dialog("text:=Login").WinButton("text:=Help").Click
+Dialog("text:=Login").Dialog("text:=Flight Reservations").WinButton("text:=确定").Click
+Dialog("text:=Login").WinButton("text:=OK").Click
+'-----打开关于
+Window("text:=Flight Reservation").WinMenu("menuobjtype:=2").Select "Help;About..."
+Window("text:=Flight Reservation").Dialog("text:=About Flight Reservation System").WinButton("text:=OK").Click
+'-------退出
+Window("text:=Flight Reservation").WinMenu("menuobjtype:=2").Select "File;Exit"

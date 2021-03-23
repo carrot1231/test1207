@@ -1,0 +1,59 @@
+SystemUtil.Run "D:\HP\QuickTest Professional\samples\flight\app\flight4a.exe"
+'---------登录
+Dialog("Login").WinEdit("Agent Name:").Set "ujiuye"
+Dialog("Login").WinEdit("Password:").SetSecure "5c4eb087cc91766ae4a170581b3d7c6afcbfefaa"
+Dialog("Login").WinButton("OK").Click
+# 循环嵌套，完成所有机场组合订票
+Dim n,m
+For n=0 To  9 Step 1
+	print "第"&n&"组城市组合"
+	For m=0 To 8 Step 1
+		Window("Flight Reservation").WaitProperty "enabled", "True", 5000
+		Window("Flight Reservation").ActiveX("MaskEdBox").Type "121223"
+		'-----------循环选择出发城市和到达城市
+		Window("Flight Reservation").WinComboBox("Fly From:").Select n
+		Window("Flight Reservation").WinComboBox("Fly From:").Output CheckPoint("Fly From:")
+		from_city=Window("Flight Reservation").WinComboBox("Fly From:").GetROProperty("Text")
+		print "出发城市："&from_city
+		Window("Flight Reservation").WinComboBox("Fly To:").Select m
+		Window("Flight Reservation").WinComboBox("Fly To:").Output CheckPoint("Fly To:")
+		to_city=Window("Flight Reservation").WinComboBox("Fly To:").GetROProperty("Text")
+		print "到达城市："&to_city
+		Window("Flight Reservation").WinButton("FLIGHT").Click
+		'----------选择第一张机票
+		Window("Flight Reservation").Dialog("Flights Table").WinList("From").Select 0
+		Window("Flight Reservation").Dialog("Flights Table").WinButton("OK").Click
+		Window("Flight Reservation").WinEdit("Name:").Set "offcn"
+		Window("Flight Reservation").WinEdit("Tickets:").SetSelection 0,1
+		'------------随机机票的数量
+		t=RandomNumber(1,10)
+		Window("Flight Reservation").WinEdit("Tickets:").Set t
+		Window("Flight Reservation").WinEdit("Tickets:").Output CheckPoint("Tickets:")
+		'--------------随机选择仓位
+		c=RandomNumber(1,3)
+		If c=1 Then
+			Window("Flight Reservation").WinRadioButton("First").Set
+			elseif c=2 Then
+			Window("Flight Reservation").WinRadioButton("Business").Set
+			elseif c=3 Then
+			Window("Flight Reservation").WinRadioButton("Economy").Set
+		End If
+		Window("Flight Reservation").WinButton("Insert Order").Click
+		Window("Flight Reservation").ActiveX("Threed Panel Control").WaitProperty "text", "Insert Done...", 8000
+		'----------新建订单
+		Window("Flight Reservation").WinMenu("Menu").Select "File;New Order"
+	Next
+	print "Next"
+Next
+
+'---------退出
+Window("Flight Reservation").WinMenu("Menu").Select "File;Exit"
+
+
+
+
+
+
+
+
+
